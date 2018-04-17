@@ -18,17 +18,13 @@ import by.htp.library.dao.UserDao;
 
 import static java.util.Objects.nonNull;
 
-//@WebFilter("/")
 public class AuthFilter implements Filter {
 
 	public void init(FilterConfig fConfig) throws ServletException {
-		System.out.println("AuthFilter init");
 	}
 
 	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
-
-		System.out.println("AuthFilter work");
 		
 		final HttpServletRequest req = (HttpServletRequest) request;
 		final HttpServletResponse res = (HttpServletResponse) response;
@@ -45,12 +41,16 @@ public class AuthFilter implements Filter {
 		// Logged user
 		
 		if (nonNull(session) && nonNull(session.getAttribute("login")) && nonNull(session.getAttribute("password"))) {
+
 			String path = ((HttpServletRequest) req).getRequestURI();
-			if (path.contains("logout") || path.contains("assets") || path.contains("book-list") || path.contains("book-add")){
-			    chain.doFilter(req, res);
-			} else {
+			if (path.contains("login")) {
+				
 				final ROLE role = (ROLE) session.getAttribute("role");
 				moveToMenu(req, res, role);
+				
+			} else {
+				
+				chain.doFilter(req, res);
 			}
 
 		} else if (userdao.get().userIsExist(login, password)) {
@@ -64,17 +64,10 @@ public class AuthFilter implements Filter {
 			moveToMenu(req, res, role);
 
 		} else {
-
+			
 			moveToMenu(req, res, ROLE.UNKNOWN);
 		}
-
 	}
-
-	/**
-	 * Move user to menu.
-	 * If access 'administrator' move to administrator menu.
-	 * If access 'user' move to user menu.
-	 */
 
 	private void moveToMenu(final HttpServletRequest req, final HttpServletResponse res, final ROLE role)
 			throws ServletException, IOException {
@@ -89,7 +82,8 @@ public class AuthFilter implements Filter {
 
 		} else {
 
-			req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
+			req.getRequestDispatcher("/index.jsp").forward(req, res);
+
 		}
 	}
 

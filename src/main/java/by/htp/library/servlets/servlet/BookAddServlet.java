@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import by.htp.library.bean.Book;
 import by.htp.library.dao.BookDao;
 
-//@WebServlet("/BookAddServlet")
 public class BookAddServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 

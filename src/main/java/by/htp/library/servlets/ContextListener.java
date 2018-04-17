@@ -32,8 +32,6 @@ public class ContextListener implements ServletContextListener {
 		sc.setAttribute("userdao", userdao);
 		sc.setAttribute("bookdao", bookdao);
 		sc.setAttribute("employeedao", employeedao);
-		
-		System.out.println("ContextInitialized work");
 
 	}
 
