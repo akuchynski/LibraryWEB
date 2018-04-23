@@ -9,21 +9,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import by.htp.library.bean.Book;
-import by.htp.library.dao.BookDao;
+import by.htp.library.bean.Order;
+import by.htp.library.dao.OrderDao;
 
-public class BookListServlet extends HttpServlet {
+public class OrderListServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		@SuppressWarnings("unchecked")
-		final AtomicReference<BookDao> bookdao = (AtomicReference<BookDao>) request.getServletContext().getAttribute("bookdao");
+		final AtomicReference<OrderDao> orderdao = (AtomicReference<OrderDao>) request.getServletContext().getAttribute("orderdao");
 		
-		final List<Book> bookList = bookdao.get().readAll();
-		request.getSession().setAttribute("bookList", bookList);
+		final List<Order> orderList = orderdao.get().readAll();
+		request.getSession().setAttribute("orderList", orderList);
 		String menuPath = (String)request.getSession().getAttribute("menuPath");
 		
-		request.getRequestDispatcher(menuPath + "/book-list.jsp").forward(request, response);
+		request.getRequestDispatcher(menuPath + "/order-list.jsp").forward(request, response);
 	}
 }

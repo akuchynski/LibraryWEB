@@ -9,16 +9,68 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import by.htp.library.bean.Employee;
 import by.htp.library.bean.ROLE;
 import by.htp.library.bean.User;
+import by.htp.library.dao.EmployeeDao;
 import by.htp.library.dao.UserDao;
 
 public class UserDaoDBImpl implements UserDao {
 
+	private static final String SQL_CREATE_USER = "INSERT INTO user (user_id, login, email, password) VALUES (?, ?, ?, ?)";
 	private static final String SQL_READ_USER_BY_LOGIN = "SELECT * FROM user WHERE login = ?";
 	private static final String SQL_READ_USER_BY_LOGIN_PASSWORD = "SELECT * FROM user WHERE login = ? AND password = ?";
 	private static final String SQL_READ_USER_ROLE_BY_LOGIN_PASSWORD = "SELECT role FROM user WHERE login = ? AND password = ?";
 
+	@Override
+	public void create(User user) {
+
+		Connection connection = connect();
+
+		try {
+
+			PreparedStatement ps = connection.prepareStatement(SQL_CREATE_USER);
+			
+			ps.setInt(1, user.getId());
+			ps.setString(2, user.getLogin());
+			ps.setString(3, user.getEmail());
+			ps.setString(4, user.getPassword());
+			
+			ps.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		disconnect(connection);
+	}
+	
+	@Override
+	public void createUserByEmployee(User user, Employee employee) {
+		
+		Connection connection = connect();
+
+		try {
+
+			PreparedStatement ps = connection.prepareStatement(SQL_CREATE_USER);
+			
+			EmployeeDao employeedao = new EmployeeDaoDBImpl();
+			int empId = employeedao.readIdEmployee(employee);
+			
+			ps.setInt(1, empId);
+			ps.setString(2, user.getLogin());
+			ps.setString(3, user.getEmail());
+			ps.setString(4, user.getPassword());
+			
+			ps.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		disconnect(connection);
+	}
+	
 	@Override
 	public User readByLogin(String login) {
 
@@ -101,12 +153,6 @@ public class UserDaoDBImpl implements UserDao {
 	}
 
 	@Override
-	public void create(User entity) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public User read(int id) {
 		// TODO Auto-generated method stub
 		return null;
@@ -129,4 +175,5 @@ public class UserDaoDBImpl implements UserDao {
 		// TODO Auto-generated method stub
 
 	}
+
 }

@@ -19,6 +19,7 @@ public class EmployeeDaoDBImpl implements EmployeeDao {
 	private static final String SQL_CREATE_EMPLOYEE = "INSERT INTO employee (name, surname, year) VALUES (?, ?, ?)";
 	private static final String SQL_READ_EMPLOYEES = "SELECT * FROM employee";
 	private static final String SQL_READ_EMPLOYEE_BY_ID = "SELECT * FROM employee WHERE emp_id = ?";
+	private static final String SQL_READ_ID_BY_EMPLOYEE = "SELECT emp_id FROM employee WHERE name = ? AND surname = ? AND year = ?";
 	private static final String SQL_READ_EMPLOYEES_BY_SURNAME = "SELECT * FROM employee WHERE surname = ?";
 	private static final String SQL_UPDATE_EMPLOYEE_BY_ID = "UPDATE employee SET name = ?, surname = ?, year = ?  WHERE emp_id = ?";
 	private static final String SQL_DELETE_EMPLOYEE_BY_ID = "DELETE FROM employee WHERE emp_id = ?";
@@ -101,6 +102,34 @@ public class EmployeeDaoDBImpl implements EmployeeDao {
 		disconnect(connection);
 
 		return employee;
+	}
+	
+	@Override
+	public int readIdEmployee(Employee employee) {
+		
+		int id = 0;
+		
+		Connection connection = connect();
+
+		try {
+			
+			PreparedStatement ps = connection.prepareStatement(SQL_READ_ID_BY_EMPLOYEE);
+			ps.setString(1, employee.getName());
+			ps.setString(2, employee.getSurname());
+			ps.setInt(3, employee.getYear());
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				id = rs.getInt("emp_id");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		disconnect(connection);
+		
+		return id;
 	}
 
 	public List<Employee> readBySurname(String surname) {

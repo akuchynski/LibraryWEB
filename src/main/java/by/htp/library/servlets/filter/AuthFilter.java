@@ -26,6 +26,9 @@ public class AuthFilter implements Filter {
 	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 		
+	    request.setCharacterEncoding("UTF-8");
+	    response.setContentType("text/html; charset=UTF-8");
+		
 		final HttpServletRequest req = (HttpServletRequest) request;
 		final HttpServletResponse res = (HttpServletResponse) response;
 
@@ -39,20 +42,21 @@ public class AuthFilter implements Filter {
 		final HttpSession session = req.getSession();
 
 		// Logged user
+
+		String path = ((HttpServletRequest) req).getRequestURI();
 		
 		if (nonNull(session) && nonNull(session.getAttribute("login")) && nonNull(session.getAttribute("password"))) {
-
-			String path = ((HttpServletRequest) req).getRequestURI();
-			if (path.contains("login")) {
+			
+			if (path.equals(req.getContextPath() + "/") || path.contains("index")) {
 				
 				final ROLE role = (ROLE) session.getAttribute("role");
 				moveToMenu(req, res, role);
 				
 			} else {
-				
+
 				chain.doFilter(req, res);
 			}
-
+			
 		} else if (userdao.get().userIsExist(login, password)) {
 
 			final ROLE role = userdao.get().getRoleByLoginPassword(login, password);
@@ -62,7 +66,11 @@ public class AuthFilter implements Filter {
 			req.getSession().setAttribute("role", role);
 
 			moveToMenu(req, res, role);
+			
+		} else if (path.contains("assets") || path.contains("register") || path.contains("ajax")) {
 
+			chain.doFilter(req, res);
+			
 		} else {
 			
 			moveToMenu(req, res, ROLE.UNKNOWN);
@@ -74,15 +82,17 @@ public class AuthFilter implements Filter {
 
 		if (role.equals(ROLE.ADMINISTRATOR)) {
 
-			req.getRequestDispatcher("/jsp/admin_menu.jsp").forward(req, res);
+			req.getSession().setAttribute("menuPath", "/jsp/admin");
+			req.getRequestDispatcher("/jsp/admin/index.jsp").forward(req, res);
 
 		} else if (role.equals(ROLE.USER)) {
-
-			req.getRequestDispatcher("/jsp/user_menu.jsp").forward(req, res);
+			
+			req.getSession().setAttribute("menuPath", "/jsp/user");
+			req.getRequestDispatcher("/jsp/user/index.jsp").forward(req, res);
 
 		} else {
 
-			req.getRequestDispatcher("/index.jsp").forward(req, res);
+			req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
 
 		}
 	}

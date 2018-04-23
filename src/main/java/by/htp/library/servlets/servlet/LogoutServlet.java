@@ -11,7 +11,7 @@ public class LogoutServlet extends HttpServlet {
 private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
 		final HttpSession session = req.getSession();
 
@@ -19,6 +19,6 @@ private static final long serialVersionUID = 1L;
 		session.removeAttribute("login");
 		session.removeAttribute("role");
 
-		resp.sendRedirect(req.getContextPath() + "/");
+		res.sendRedirect(req.getContextPath() + "/");
 	}
 }
