@@ -1,11 +1,11 @@
 package by.htp.library.dao;
 
-import by.htp.library.bean.Book;
-import by.htp.library.bean.Employee;
+import java.util.List;
+
 import by.htp.library.bean.Order;
 
 public interface OrderDao extends BaseDao<Order> {
 	
-	public void createOrderByBookAndEmployee(Book book, Employee employee);
+	public List<Order> readOrdersByStatus(String status);
 
 }

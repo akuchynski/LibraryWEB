@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import by.htp.library.bean.Employee;
 import by.htp.library.bean.User;
 import by.htp.library.dao.EmployeeDao;
 import by.htp.library.dao.UserDao;
@@ -29,27 +28,20 @@ public class RegisterServlet extends HttpServlet {
 		final AtomicReference<UserDao> userdao = (AtomicReference<UserDao>) request.getServletContext().getAttribute("userdao");
 		final AtomicReference<EmployeeDao> employeedao = (AtomicReference<EmployeeDao>) request.getServletContext().getAttribute("employeedao");
 
-		final String name = request.getParameter("name");
-		final String surname = request.getParameter("surname");
-		final Integer year = Integer.parseInt(request.getParameter("year"));
+		final Integer emplId = Integer.parseInt(request.getParameter("emplId"));
 		
 		final String login = request.getParameter("login");
 		final String email = request.getParameter("email");
 		final String password = request.getParameter("password");
 
-		final Employee employee = new Employee();
 		final User user = new User();
 
-		employee.setName(name);
-		employee.setSurname(surname);
-		employee.setYear(year);
-
+		user.setId(employeedao.get().read(emplId).getId());
 		user.setLogin(login);
 		user.setEmail(email);
 		user.setPassword(password);
 		
-		employeedao.get().create(employee);
-		userdao.get().createUserByEmployee(user, employee);
+		userdao.get().create(user);
 
 		response.sendRedirect(request.getContextPath() + "/");
 		//doGet(request, response);

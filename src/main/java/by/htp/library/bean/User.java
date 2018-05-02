@@ -1,8 +1,6 @@
 package by.htp.library.bean;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({"id", "login", "password", "email", "role"})
 public class User extends Entity{
 	private int id;
 	private String login;

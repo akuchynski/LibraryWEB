@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import by.htp.library.bean.Employee;
@@ -18,6 +20,7 @@ import by.htp.library.dao.UserDao;
 public class UserDaoDBImpl implements UserDao {
 
 	private static final String SQL_CREATE_USER = "INSERT INTO user (user_id, login, email, password) VALUES (?, ?, ?, ?)";
+	private static final String SQL_READ_USERS = "SELECT * FROM user";
 	private static final String SQL_READ_USER_BY_LOGIN = "SELECT * FROM user WHERE login = ?";
 	private static final String SQL_READ_USER_BY_LOGIN_PASSWORD = "SELECT * FROM user WHERE login = ? AND password = ?";
 	private static final String SQL_READ_USER_ROLE_BY_LOGIN_PASSWORD = "SELECT role FROM user WHERE login = ? AND password = ?";
@@ -99,6 +102,36 @@ public class UserDaoDBImpl implements UserDao {
 
 		return user;
 	}
+	
+	public List<User> readAll() {
+
+		List<User> users = new ArrayList<>();
+		Connection connection = connect();
+
+		try {
+
+			Statement st = connection.createStatement();
+			ResultSet rs = st.executeQuery(SQL_READ_USERS);
+
+			while (rs.next()) {
+				User user = new User();
+				user.setId(rs.getInt("user_id"));
+				user.setLogin(rs.getString("login"));
+				user.setPassword(rs.getString("password"));
+				user.setEmail(rs.getString("email"));
+				user.setRole(ROLE.valueOf(rs.getString("role")));
+				
+				users.add(user);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		disconnect(connection);
+
+		return users;
+	}
 
 	public boolean userIsExist(String login, String password) {
 
@@ -158,11 +191,6 @@ public class UserDaoDBImpl implements UserDao {
 		return null;
 	}
 
-	@Override
-	public List<User> readAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void update(int id, User entity) {

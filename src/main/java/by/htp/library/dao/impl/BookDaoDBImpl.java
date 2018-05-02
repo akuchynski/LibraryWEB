@@ -17,7 +17,7 @@ public class BookDaoDBImpl implements BookDao {
 	private static final String SQL_CREATE_BOOK = "INSERT INTO book (title, description, author, year) VALUES (?, ?, ?, ?)";
 	private static final String SQL_READ_BOOKS = "SELECT * FROM book";
 	private static final String SQL_READ_BOOK_BY_ID = "SELECT * FROM book WHERE book_id = ?";
-	private static final String SQL_READ_BOOKS_BY_TITLE = "SELECT * FROM book WHERE title = ?";
+	private static final String SQL_READ_BOOKS_BY_TITLE = "SELECT * FROM book WHERE title LIKE ?";
 	private static final String SQL_UPDATE_BOOK_BY_ID = "UPDATE book SET title = ?, description = ?, author = ?, year = ? WHERE book_id = ?";
 	private static final String SQL_DELETE_BOOK_BY_ID = "DELETE FROM book WHERE book_id = ?";
 
@@ -110,7 +110,7 @@ public class BookDaoDBImpl implements BookDao {
 		try {
 
 			PreparedStatement ps = connection.prepareStatement(SQL_READ_BOOKS_BY_TITLE);
-			ps.setString(1, title);
+			ps.setString(1, "%" + title + "%");
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {

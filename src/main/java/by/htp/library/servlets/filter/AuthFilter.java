@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import by.htp.library.bean.Employee;
 import by.htp.library.bean.ROLE;
+import by.htp.library.dao.EmployeeDao;
 import by.htp.library.dao.UserDao;
 
 import static java.util.Objects.nonNull;
@@ -23,6 +25,7 @@ public class AuthFilter implements Filter {
 	public void init(FilterConfig fConfig) throws ServletException {
 	}
 
+	@SuppressWarnings("unchecked")
 	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 		
@@ -35,10 +38,8 @@ public class AuthFilter implements Filter {
 		final String login = req.getParameter("login");
 		final String password = req.getParameter("password");
 
-		@SuppressWarnings("unchecked")
-		final AtomicReference<UserDao> userdao = (AtomicReference<UserDao>) req.getServletContext()
-				.getAttribute("userdao");
-
+		final AtomicReference<UserDao> userdao = (AtomicReference<UserDao>) req.getServletContext().getAttribute("userdao");
+		final AtomicReference<EmployeeDao> employeedao = (AtomicReference<EmployeeDao>) request.getServletContext().getAttribute("employeedao");
 		final HttpSession session = req.getSession();
 
 		// Logged user
@@ -47,7 +48,7 @@ public class AuthFilter implements Filter {
 		
 		if (nonNull(session) && nonNull(session.getAttribute("login")) && nonNull(session.getAttribute("password"))) {
 			
-			if (path.equals(req.getContextPath() + "/") || path.contains("index")) {
+			if (path.equals(req.getContextPath() + "/")) {
 				
 				final ROLE role = (ROLE) session.getAttribute("role");
 				moveToMenu(req, res, role);
@@ -57,13 +58,20 @@ public class AuthFilter implements Filter {
 				chain.doFilter(req, res);
 			}
 			
+		// Not logged user
+		
 		} else if (userdao.get().userIsExist(login, password)) {
 
 			final ROLE role = userdao.get().getRoleByLoginPassword(login, password);
+			int currentId = userdao.get().readByLogin(login).getId();
 
 			req.getSession().setAttribute("password", password);
 			req.getSession().setAttribute("login", login);
 			req.getSession().setAttribute("role", role);
+			req.getSession().setAttribute("currentId", currentId);
+			
+			Employee currentEmployee = employeedao.get().read(currentId);
+			req.getSession().setAttribute("currentEmployee", currentEmployee);
 
 			moveToMenu(req, res, role);
 			
@@ -83,12 +91,14 @@ public class AuthFilter implements Filter {
 		if (role.equals(ROLE.ADMINISTRATOR)) {
 
 			req.getSession().setAttribute("menuPath", "/jsp/admin");
-			req.getRequestDispatcher("/jsp/admin/index.jsp").forward(req, res);
+			//req.getRequestDispatcher("/jsp/admin/dashboard.jsp").forward(req, res);
+			res.sendRedirect("dashboard");
 
 		} else if (role.equals(ROLE.USER)) {
 			
 			req.getSession().setAttribute("menuPath", "/jsp/user");
-			req.getRequestDispatcher("/jsp/user/index.jsp").forward(req, res);
+			//req.getRequestDispatcher("/jsp/user/dashboard.jsp").forward(req, res);
+			res.sendRedirect("dashboard");
 
 		} else {
 

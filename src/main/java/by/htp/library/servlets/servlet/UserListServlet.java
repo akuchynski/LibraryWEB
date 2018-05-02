@@ -11,36 +11,30 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import by.htp.library.bean.Book;
 import by.htp.library.bean.Employee;
-import by.htp.library.bean.Order;
-import by.htp.library.dao.BookDao;
+import by.htp.library.bean.User;
 import by.htp.library.dao.EmployeeDao;
-import by.htp.library.dao.OrderDao;
+import by.htp.library.dao.UserDao;
 
-public class OrderListServlet extends HttpServlet {
+public class UserListServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		final AtomicReference<OrderDao> orderdao = (AtomicReference<OrderDao>) request.getServletContext().getAttribute("orderdao");
-		final AtomicReference<BookDao> bookdao = (AtomicReference<BookDao>) request.getServletContext().getAttribute("bookdao");
+		final AtomicReference<UserDao> userdao = (AtomicReference<UserDao>) request.getServletContext().getAttribute("userdao");
 		final AtomicReference<EmployeeDao> employeedao = (AtomicReference<EmployeeDao>) request.getServletContext().getAttribute("employeedao");
 		
-		final List<Order> orderList = orderdao.get().readAll();
-		final List<Book> bookList = bookdao.get().readAll();
+		final List<User> userList = userdao.get().readAll();
 		final List<Employee> employeeList = employeedao.get().readAll();
 		
-		Map<Integer, Book> bookMap = bookList.stream().collect(Collectors.toMap(Book::getId, item -> item));
 		Map<Integer, Employee> employeeMap = employeeList.stream().collect(Collectors.toMap(Employee::getId, item -> item));
 		
-		request.getSession().setAttribute("orderList", orderList);
-		request.getSession().setAttribute("bookMap", bookMap);
+		request.getSession().setAttribute("userList", userList);
 		request.getSession().setAttribute("employeeMap", employeeMap);
 		
 		String menuPath = (String)request.getSession().getAttribute("menuPath");
 		
-		request.getRequestDispatcher(menuPath + "/order-list.jsp").forward(request, response);
+		request.getRequestDispatcher(menuPath + "/user-list.jsp").forward(request, response);
 	}
 }

@@ -18,6 +18,7 @@ public class EmployeeDaoDBImpl implements EmployeeDao {
 
 	private static final String SQL_CREATE_EMPLOYEE = "INSERT INTO employee (name, surname, year) VALUES (?, ?, ?)";
 	private static final String SQL_READ_EMPLOYEES = "SELECT * FROM employee";
+	private static final String SQL_READ_EMPLOYEES_BY_NAME_SURNAME = "SELECT emp_id, name, surname FROM employee WHERE (CONCAT(surname, ' ', name) LIKE ?) OR (CONCAT(name, ' ', surname) LIKE ?)";
 	private static final String SQL_READ_EMPLOYEE_BY_ID = "SELECT * FROM employee WHERE emp_id = ?";
 	private static final String SQL_READ_ID_BY_EMPLOYEE = "SELECT emp_id FROM employee WHERE name = ? AND surname = ? AND year = ?";
 	private static final String SQL_READ_EMPLOYEES_BY_SURNAME = "SELECT * FROM employee WHERE surname = ?";
@@ -64,6 +65,38 @@ public class EmployeeDaoDBImpl implements EmployeeDao {
 				employee.setName(rs.getString("name"));
 				employee.setSurname(rs.getString("surname"));
 				employee.setYear(rs.getInt("year"));
+
+				employees.add(employee);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		disconnect(connection);
+
+		return employees;
+	}
+	
+	public List<Employee> readByNameSurname(String fullName) {
+
+		List<Employee> employees = new ArrayList<>();
+
+		Connection connection = connect();
+
+		try {
+			
+			PreparedStatement ps = connection.prepareStatement(SQL_READ_EMPLOYEES_BY_NAME_SURNAME);
+			ps.setString(1, "%" + fullName + "%");
+			ps.setString(2, "%" + fullName + "%");
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				
+				Employee employee = new Employee();
+				employee.setId(rs.getInt("emp_id"));
+				employee.setName(rs.getString("name"));
+				employee.setSurname(rs.getString("surname"));
 
 				employees.add(employee);
 			}

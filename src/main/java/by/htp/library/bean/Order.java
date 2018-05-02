@@ -3,8 +3,8 @@ package by.htp.library.bean;
 import java.util.Date;
 
 public class Order extends Entity{
-	private Book book;
-	private Employee employee;
+	private int bookId;
+	private int emplId;
 	private int days;
 	private Date date;
 	private STATUS status;
@@ -13,29 +13,29 @@ public class Order extends Entity{
 		super();
 	}
 
-	public Order(Book book, Employee employee, int days, Date date, STATUS status) {
+	public Order(int bookId, int emplId, int days, Date date, STATUS status) {
 		super();
-		this.book = book;
-		this.employee = employee;
+		this.bookId = bookId;
+		this.emplId = emplId;
 		this.days = days;
 		this.date = date;
 		this.status = status;
 	}
-	
-	public Book getBook() {
-		return book;
+
+	public int getBookId() {
+		return bookId;
 	}
 
-	public void setBook(Book book) {
-		this.book = book;
+	public void setBookId(int bookId) {
+		this.bookId = bookId;
 	}
 
-	public Employee getEmployee() {
-		return employee;
+	public int getEmplId() {
+		return emplId;
 	}
 
-	public void setEmployee(Employee employee) {
-		this.employee = employee;
+	public void setEmplId(int emplId) {
+		this.emplId = emplId;
 	}
 
 	public int getDays() {
@@ -66,10 +66,10 @@ public class Order extends Entity{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((book == null) ? 0 : book.hashCode());
+		result = prime * result + bookId;
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result + days;
-		result = prime * result + ((employee == null) ? 0 : employee.hashCode());
+		result = prime * result + emplId;
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		return result;
 	}
@@ -83,10 +83,7 @@ public class Order extends Entity{
 		if (getClass() != obj.getClass())
 			return false;
 		Order other = (Order) obj;
-		if (book == null) {
-			if (other.book != null)
-				return false;
-		} else if (!book.equals(other.book))
+		if (bookId != other.bookId)
 			return false;
 		if (date == null) {
 			if (other.date != null)
@@ -95,10 +92,7 @@ public class Order extends Entity{
 			return false;
 		if (days != other.days)
 			return false;
-		if (employee == null) {
-			if (other.employee != null)
-				return false;
-		} else if (!employee.equals(other.employee))
+		if (emplId != other.emplId)
 			return false;
 		if (status != other.status)
 			return false;
@@ -107,7 +101,8 @@ public class Order extends Entity{
 
 	@Override
 	public String toString() {
-		return "Order [book=" + book + ", employee=" + employee + ", days=" + days + ", date=" + date + ", status="
-				+ status + "]";
+		return "Order [bookId=" + bookId + ", emplId=" + emplId + ", days=" + days + ", date=" + date + ", status="
+				+ status + ", id=" + id + "]";
 	}
+
 }

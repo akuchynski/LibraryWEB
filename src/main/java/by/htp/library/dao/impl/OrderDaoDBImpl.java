@@ -4,37 +4,52 @@ import static by.htp.library.dao.util.DBConnectionHelper.connect;
 import static by.htp.library.dao.util.DBConnectionHelper.disconnect;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.TimeZone;
 
-import by.htp.library.bean.Book;
-import by.htp.library.bean.Employee;
 import by.htp.library.bean.Order;
 import by.htp.library.bean.STATUS;
-import by.htp.library.dao.BookDao;
-import by.htp.library.dao.EmployeeDao;
 import by.htp.library.dao.OrderDao;
 
 public class OrderDaoDBImpl implements OrderDao {
 
-	private static final String SQL_CREATE_ORDER_BY_BOOK_AND_EMPLOYEE = "INSERT INTO user (user_id, login, email, password) VALUES (?, ?, ?, ?)";
+	private static final String SQL_CREATE_ORDER = "INSERT INTO employee_book (book_id, employee_id, days, date, status) VALUES (?, ?, ?, ?, ?)";
 	private static final String SQL_READ_ORDERS = "SELECT * FROM employee_book";
-	private static final String SQL_READ_USER_ROLE_BY_LOGIN_PASSWORD = "SELECT role FROM user WHERE login = ? AND password = ?";
+	private static final String SQL_READ_ORDERS_BY_STATUS = "SELECT * FROM employee_book WHERE status = ?";
 	
 	@Override
-	public void createOrderByBookAndEmployee(Book book, Employee employee) {
+	public void create(Order entity) {
+		
+		Connection connection = connect();
+
+		try {
+
+			PreparedStatement ps = connection.prepareStatement(SQL_CREATE_ORDER);
+			
+			ps.setInt(1, entity.getBookId());
+			ps.setInt(2, entity.getEmplId());
+			ps.setInt(3, entity.getDays());
+			ps.setDate(4, java.sql.Date.valueOf(java.time.LocalDate.now()), new GregorianCalendar(TimeZone.getTimeZone("GMT+3")));
+			ps.setString(5, entity.getStatus().name());
+			ps.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		disconnect(connection);
 
 	}
 
 
 	@Override
 	public List<Order> readAll() {
-		
-		BookDao bookdao = new BookDaoDBImpl();
-		EmployeeDao employeedao = new EmployeeDaoDBImpl();
 
 		List<Order> orders = new ArrayList<>();
 		Connection connection = connect();
@@ -48,8 +63,8 @@ public class OrderDaoDBImpl implements OrderDao {
 				
 				Order order = new Order();
 				order.setId(rs.getInt("order_id"));
-				order.setBook(bookdao.read(rs.getInt("book_id")));
-				order.setEmployee(employeedao.read(rs.getInt("employee_id")));
+				order.setBookId(rs.getInt("book_id"));
+				order.setEmplId(rs.getInt("employee_id"));
 				order.setDays(rs.getInt("days"));
 				order.setDate(rs.getDate("date"));	
 				order.setStatus(STATUS.valueOf(rs.getString("status")));
@@ -67,10 +82,39 @@ public class OrderDaoDBImpl implements OrderDao {
 	}
 	
 	@Override
-	public void create(Order entity) {
-		// TODO Auto-generated method stub
-		
+	public List<Order> readOrdersByStatus(String status) {
+
+		List<Order> orders = new ArrayList<>();
+		Connection connection = connect();
+
+		try {
+
+			PreparedStatement ps = connection.prepareStatement(SQL_READ_ORDERS_BY_STATUS);
+			ps.setString(1, status);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				
+				Order order = new Order();
+				order.setId(rs.getInt("order_id"));
+				order.setBookId(rs.getInt("book_id"));
+				order.setEmplId(rs.getInt("employee_id"));
+				order.setDays(rs.getInt("days"));
+				order.setDate(rs.getDate("date"));	
+				order.setStatus(STATUS.valueOf(rs.getString("status")));
+				
+				orders.add(order);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		disconnect(connection);
+
+		return orders;
 	}
+	
 
 	@Override
 	public Order read(int id) {
