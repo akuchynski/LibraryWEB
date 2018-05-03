@@ -18,7 +18,10 @@ public class BookAddServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		String menuPath = (String)request.getSession().getAttribute("menuPath");
+		
 		request.getRequestDispatcher(menuPath + "/book-add.jsp").forward(request, response);
+		
+		request.getSession().setAttribute("successBookSubmit", false);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -38,7 +41,9 @@ public class BookAddServlet extends HttpServlet {
 		book.setYear(year);
 		
 		bookdao.get().create(book);
+		
+		request.getSession().setAttribute("successBookSubmit", true);
 
-		doGet(request, response);
+		response.sendRedirect("book-add");
 	}
 }

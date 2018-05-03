@@ -37,21 +37,22 @@ public class OrderAddServlet extends HttpServlet {
 		String menuPath = (String)request.getSession().getAttribute("menuPath");
 		
 		request.getRequestDispatcher(menuPath + "/order-add.jsp").forward(request, response);
+		
+		request.getSession().setAttribute("successOrderSubmit", false);
 	}
 
 	@SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		final AtomicReference<OrderDao> orderdao = (AtomicReference<OrderDao>) request.getServletContext().getAttribute("orderdao");
-		
 		final HttpSession session = request.getSession();
+		final Order order = new Order();
+		
 		final ROLE role = (ROLE) session.getAttribute("role");
 		STATUS status = STATUS.WAIT;
 		if (role.equals(ROLE.ADMINISTRATOR)) {
 			status = STATUS.DELIVERED;
 		}
-		
-		final Order order = new Order();
 		
 		order.setBookId(Integer.parseInt(request.getParameter("bookId")));
 		order.setEmplId(Integer.parseInt(request.getParameter("emplId")));
@@ -59,7 +60,9 @@ public class OrderAddServlet extends HttpServlet {
 		order.setStatus(status);
 		
 		orderdao.get().create(order);
+		
+		session.setAttribute("successOrderSubmit", true);
 
-		doGet(request, response);
+		response.sendRedirect("order-add");
 	}
 }

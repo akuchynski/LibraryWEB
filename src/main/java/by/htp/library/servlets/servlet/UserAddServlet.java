@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import by.htp.library.bean.Book;
 import by.htp.library.bean.Employee;
@@ -34,27 +35,26 @@ public class UserAddServlet extends HttpServlet {
 		String menuPath = (String)request.getSession().getAttribute("menuPath");
 		
 		request.getRequestDispatcher(menuPath + "/user-add.jsp").forward(request, response);
+		
+		request.getSession().setAttribute("successUserSubmit", false);
 	}
 
 	@SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		final AtomicReference<UserDao> userdao = (AtomicReference<UserDao>) request.getServletContext().getAttribute("userdao");
-		
-		final Integer id = Integer.parseInt(request.getParameter("emplId"));
-		final String login = request.getParameter("login");
-		final String email = request.getParameter("email");
-		final String password = request.getParameter("password");
-		
+		final HttpSession session = request.getSession();
 		final User user = new User();
 		
-		user.setId(id);
-		user.setLogin(login);
-		user.setEmail(email);
-		user.setPassword(password);
+		user.setId(Integer.parseInt(request.getParameter("emplId")));
+		user.setLogin(request.getParameter("login"));
+		user.setEmail(request.getParameter("email"));
+		user.setPassword(request.getParameter("password"));
 		
 		userdao.get().create(user);
 
-		doGet(request, response);
+		session.setAttribute("successUserSubmit", true);
+
+		response.sendRedirect("user-add");
 	}
 }
