@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import by.htp.library.bean.Book;
 import by.htp.library.bean.Employee;
@@ -27,15 +28,19 @@ public class OrderListServlet extends HttpServlet {
 		final AtomicReference<OrderDao> orderdao = (AtomicReference<OrderDao>) request.getServletContext().getAttribute("orderdao");
 		final AtomicReference<BookDao> bookdao = (AtomicReference<BookDao>) request.getServletContext().getAttribute("bookdao");
 		final AtomicReference<EmployeeDao> employeedao = (AtomicReference<EmployeeDao>) request.getServletContext().getAttribute("employeedao");
+		final HttpSession session = request.getSession();
 		
-		final List<Order> orderList = orderdao.get().readAll();
+		final List<Order> orderListEmpl = orderdao.get().readOrdersByEmployeeId((Integer)session.getAttribute("currentId"));
+		final List<Order> orderListAll = orderdao.get().readAll();
+		
 		final List<Book> bookList = bookdao.get().readAll();
 		final List<Employee> employeeList = employeedao.get().readAll();
 		
 		Map<Integer, Book> bookMap = bookList.stream().collect(Collectors.toMap(Book::getId, item -> item));
 		Map<Integer, Employee> employeeMap = employeeList.stream().collect(Collectors.toMap(Employee::getId, item -> item));
 		
-		request.getSession().setAttribute("orderList", orderList);
+		request.getSession().setAttribute("orderListEmpl", orderListEmpl);
+		request.getSession().setAttribute("orderListAll", orderListAll);
 		request.getSession().setAttribute("bookMap", bookMap);
 		request.getSession().setAttribute("employeeMap", employeeMap);
 		

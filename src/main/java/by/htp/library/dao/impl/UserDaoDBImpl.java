@@ -20,10 +20,12 @@ import by.htp.library.dao.UserDao;
 public class UserDaoDBImpl implements UserDao {
 
 	private static final String SQL_CREATE_USER = "INSERT INTO user (user_id, login, email, password) VALUES (?, ?, ?, ?)";
-	private static final String SQL_READ_USERS = "SELECT * FROM user";
+	private static final String SQL_READ_USER_BY_ID = "SELECT * FROM user WHERE user_id = ?";
 	private static final String SQL_READ_USER_BY_LOGIN = "SELECT * FROM user WHERE login = ?";
+	private static final String SQL_READ_USERS = "SELECT * FROM user";
 	private static final String SQL_READ_USER_BY_LOGIN_PASSWORD = "SELECT * FROM user WHERE login = ? AND password = ?";
 	private static final String SQL_READ_USER_ROLE_BY_LOGIN_PASSWORD = "SELECT role FROM user WHERE login = ? AND password = ?";
+	private static final String SQL_UPDATE_USER_BY_ID = "UPDATE user SET email = ?, password = ? WHERE user_id = ?";
 
 	@Override
 	public void create(User user) {
@@ -72,6 +74,35 @@ public class UserDaoDBImpl implements UserDao {
 		}
 
 		disconnect(connection);
+	}
+	
+	@Override
+	public User read(int id) {
+
+		User user = new User();
+		Connection connection = connect();
+
+		try {
+
+			PreparedStatement ps = connection.prepareStatement(SQL_READ_USER_BY_ID);
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				user.setId(rs.getInt("user_id"));
+				user.setLogin(rs.getString("login"));
+				user.setPassword(rs.getString("password"));
+				user.setEmail(rs.getString("email"));
+				user.setRole(ROLE.valueOf(rs.getString("role")));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		disconnect(connection);
+
+		return user;
 	}
 	
 	@Override
@@ -186,15 +217,24 @@ public class UserDaoDBImpl implements UserDao {
 	}
 
 	@Override
-	public User read(int id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
 	public void update(int id, User entity) {
-		// TODO Auto-generated method stub
+		Connection connection = connect();
+
+		try {
+
+			PreparedStatement ps = connection.prepareStatement(SQL_UPDATE_USER_BY_ID);
+			
+			ps.setString(1, entity.getEmail());
+			ps.setString(2, entity.getPassword());
+			ps.setInt(3, id);
+			
+			ps.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		disconnect(connection);
 
 	}
 

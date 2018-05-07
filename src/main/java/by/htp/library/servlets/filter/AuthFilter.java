@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import by.htp.library.bean.Employee;
 import by.htp.library.bean.ROLE;
+import by.htp.library.bean.User;
 import by.htp.library.dao.EmployeeDao;
 import by.htp.library.dao.UserDao;
 
@@ -54,7 +55,7 @@ public class AuthFilter implements Filter {
 				moveToMenu(req, res, role);
 				
 			} else {
-
+				
 				chain.doFilter(req, res);
 			}
 			
@@ -71,11 +72,14 @@ public class AuthFilter implements Filter {
 			req.getSession().setAttribute("currentId", currentId);
 			
 			Employee currentEmployee = employeedao.get().read(currentId);
+			User currentUser = userdao.get().read(currentId);
+			
 			req.getSession().setAttribute("currentEmployee", currentEmployee);
+			req.getSession().setAttribute("currentUser", currentUser);
 
 			moveToMenu(req, res, role);
 			
-		} else if (path.contains("assets") || path.contains("register") || path.contains("ajax")) {
+		} else if (path.contains("assets") || path.contains("login") || path.contains("register") || path.contains("ajax")) {
 
 			chain.doFilter(req, res);
 			
@@ -91,19 +95,16 @@ public class AuthFilter implements Filter {
 		if (role.equals(ROLE.ADMINISTRATOR)) {
 
 			req.getSession().setAttribute("menuPath", "/jsp/admin");
-			//req.getRequestDispatcher("/jsp/admin/dashboard.jsp").forward(req, res);
 			res.sendRedirect("dashboard");
 
 		} else if (role.equals(ROLE.USER)) {
 			
 			req.getSession().setAttribute("menuPath", "/jsp/user");
-			//req.getRequestDispatcher("/jsp/user/dashboard.jsp").forward(req, res);
 			res.sendRedirect("dashboard");
 
 		} else {
 
-			req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
-
+			res.sendRedirect("login");
 		}
 	}
 
