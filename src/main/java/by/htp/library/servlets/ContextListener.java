@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebListener;
 import by.htp.library.dao.BookDao;
 import by.htp.library.dao.EmployeeDao;
 import by.htp.library.dao.OrderDao;
+import by.htp.library.dao.ReportDao;
 import by.htp.library.dao.UserDao;
 import by.htp.library.dao.impl.BookDaoDBImpl;
 import by.htp.library.dao.impl.EmployeeDaoDBImpl;
@@ -23,6 +24,7 @@ public class ContextListener implements ServletContextListener {
 	private AtomicReference<BookDao> bookdao;
 	private AtomicReference<EmployeeDao> employeedao;
 	private AtomicReference<OrderDao> orderdao;
+	private AtomicReference<ReportDao> reportdao;
 
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
@@ -31,12 +33,14 @@ public class ContextListener implements ServletContextListener {
 		bookdao = new AtomicReference<>(new BookDaoDBImpl());
 		employeedao = new AtomicReference<>(new EmployeeDaoDBImpl());
 		orderdao = new AtomicReference<>(new OrderDaoDBImpl());
+		reportdao = new AtomicReference<>(new ReportDao());
 
 		final ServletContext sc = sce.getServletContext();
 		sc.setAttribute("userdao", userdao);
 		sc.setAttribute("bookdao", bookdao);
 		sc.setAttribute("employeedao", employeedao);
 		sc.setAttribute("orderdao", orderdao);
+		sc.setAttribute("reportdao", reportdao);
 
 	}
 
@@ -48,15 +52,5 @@ public class ContextListener implements ServletContextListener {
 		employeedao = null;
 		orderdao = null;
 
-//		System.out.println("CLOSE CONNECTION");
-//		DataSource ds = (DataSource) sce.getServletContext().getAttribute("dbConnection");
-//		try {
-//			if (!ds.getConnection().isClosed()) {
-//				System.out.println("CONNECTION IS CLOSED");
-//				ds.getConnection().close();
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
 	}
 }

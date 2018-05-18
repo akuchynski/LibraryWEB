@@ -23,29 +23,36 @@ public class OrderListServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unchecked")
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		final AtomicReference<OrderDao> orderdao = (AtomicReference<OrderDao>) request.getServletContext().getAttribute("orderdao");
-		final AtomicReference<BookDao> bookdao = (AtomicReference<BookDao>) request.getServletContext().getAttribute("bookdao");
-		final AtomicReference<EmployeeDao> employeedao = (AtomicReference<EmployeeDao>) request.getServletContext().getAttribute("employeedao");
-		final HttpSession session = request.getSession();
-		
-		final List<Order> orderListEmpl = orderdao.get().readOrdersByEmployeeId((Integer)session.getAttribute("currentId"));
-		final List<Order> orderListAll = orderdao.get().readAll();
-		
-		final List<Book> bookList = bookdao.get().readAll();
-		final List<Employee> employeeList = employeedao.get().readAll();
-		
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		AtomicReference<OrderDao> orderdao = (AtomicReference<OrderDao>) request.getServletContext()
+				.getAttribute("orderdao");
+		AtomicReference<BookDao> bookdao = (AtomicReference<BookDao>) request.getServletContext()
+				.getAttribute("bookdao");
+		AtomicReference<EmployeeDao> employeedao = (AtomicReference<EmployeeDao>) request.getServletContext()
+				.getAttribute("employeedao");
+		HttpSession session = request.getSession();
+
+		List<Order> orderListEmpl = orderdao.get()
+				.readOrdersByEmployeeId((Integer) session.getAttribute("currentId"));
+		List<Order> orderListAll = orderdao.get().readAll();
+
+		List<Book> bookList = bookdao.get().readAll();
+		List<Employee> employeeList = employeedao.get().readAll();
+
 		Map<Integer, Book> bookMap = bookList.stream().collect(Collectors.toMap(Book::getId, item -> item));
-		Map<Integer, Employee> employeeMap = employeeList.stream().collect(Collectors.toMap(Employee::getId, item -> item));
-		
+		Map<Integer, Employee> employeeMap = employeeList.stream()
+				.collect(Collectors.toMap(Employee::getId, item -> item));
+
 		request.getSession().setAttribute("orderListEmpl", orderListEmpl);
 		request.getSession().setAttribute("orderListAll", orderListAll);
 		request.getSession().setAttribute("bookMap", bookMap);
 		request.getSession().setAttribute("employeeMap", employeeMap);
-		
-		String menuPath = (String)request.getSession().getAttribute("menuPath");
-		
+
+		String menuPath = (String) request.getSession().getAttribute("menuPath");
+
 		request.getRequestDispatcher(menuPath + "/order-list.jsp").forward(request, response);
+		request.getSession().removeAttribute("messageClass");
 	}
 }

@@ -7,6 +7,7 @@ import by.htp.library.bean.Employee;
 public interface EmployeeDao extends BaseDao<Employee> {
 
 	public List<Employee> readBySurname(String title);
+
 	public int readIdEmployee(Employee employee);
 
 }

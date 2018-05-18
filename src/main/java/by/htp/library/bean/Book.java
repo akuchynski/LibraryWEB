@@ -2,6 +2,7 @@ package by.htp.library.bean;
 
 public class Book extends Entity {
 
+	private static final long serialVersionUID = 1L;
 	private String title;
 	private String description;
 	private String author;
@@ -42,7 +43,7 @@ public class Book extends Entity {
 	public void setAuthor(String author) {
 		this.author = author;
 	}
-	
+
 	public int getYear() {
 		return year;
 	}

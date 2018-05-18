@@ -15,15 +15,18 @@ import by.htp.library.dao.BookDao;
 public class BookListServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
 		@SuppressWarnings("unchecked")
-		final AtomicReference<BookDao> bookdao = (AtomicReference<BookDao>) request.getServletContext().getAttribute("bookdao");
-		
-		final List<Book> bookList = bookdao.get().readAll();
+		AtomicReference<BookDao> bookdao = (AtomicReference<BookDao>) request.getServletContext()
+				.getAttribute("bookdao");
+
+		List<Book> bookList = bookdao.get().readAll();
 		request.getSession().setAttribute("bookList", bookList);
-		String menuPath = (String)request.getSession().getAttribute("menuPath");
-		
+		String menuPath = (String) request.getSession().getAttribute("menuPath");
+
 		request.getRequestDispatcher(menuPath + "/book-list.jsp").forward(request, response);
+		request.getSession().removeAttribute("messageClass");
 	}
 }

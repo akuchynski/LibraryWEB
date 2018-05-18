@@ -32,11 +32,11 @@ public class EmployeeDaoDBImpl implements EmployeeDao {
 		try {
 
 			PreparedStatement ps = connection.prepareStatement(SQL_CREATE_EMPLOYEE);
-			
+
 			ps.setString(1, entity.getName());
 			ps.setString(2, entity.getSurname());
 			ps.setInt(3, entity.getYear());
-			
+
 			ps.executeUpdate();
 
 		} catch (SQLException e) {
@@ -54,12 +54,12 @@ public class EmployeeDaoDBImpl implements EmployeeDao {
 		Connection connection = connect();
 
 		try {
-			
+
 			Statement st = connection.createStatement();
 			ResultSet rs = st.executeQuery(SQL_READ_EMPLOYEES);
 
 			while (rs.next()) {
-				
+
 				Employee employee = new Employee();
 				employee.setId(rs.getInt("emp_id"));
 				employee.setName(rs.getString("name"));
@@ -77,7 +77,7 @@ public class EmployeeDaoDBImpl implements EmployeeDao {
 
 		return employees;
 	}
-	
+
 	public List<Employee> readByNameSurname(String fullName) {
 
 		List<Employee> employees = new ArrayList<>();
@@ -85,14 +85,14 @@ public class EmployeeDaoDBImpl implements EmployeeDao {
 		Connection connection = connect();
 
 		try {
-			
+
 			PreparedStatement ps = connection.prepareStatement(SQL_READ_EMPLOYEES_BY_NAME_SURNAME);
 			ps.setString(1, "%" + fullName + "%");
 			ps.setString(2, "%" + fullName + "%");
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-				
+
 				Employee employee = new Employee();
 				employee.setId(rs.getInt("emp_id"));
 				employee.setName(rs.getString("name"));
@@ -116,7 +116,7 @@ public class EmployeeDaoDBImpl implements EmployeeDao {
 		Employee employee = new Employee();
 
 		try {
-			
+
 			PreparedStatement ps = connection.prepareStatement(SQL_READ_EMPLOYEE_BY_ID);
 			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
@@ -136,16 +136,16 @@ public class EmployeeDaoDBImpl implements EmployeeDao {
 
 		return employee;
 	}
-	
+
 	@Override
 	public int readIdEmployee(Employee employee) {
-		
+
 		int id = 0;
-		
+
 		Connection connection = connect();
 
 		try {
-			
+
 			PreparedStatement ps = connection.prepareStatement(SQL_READ_ID_BY_EMPLOYEE);
 			ps.setString(1, employee.getName());
 			ps.setString(2, employee.getSurname());
@@ -161,7 +161,7 @@ public class EmployeeDaoDBImpl implements EmployeeDao {
 		}
 
 		disconnect(connection);
-		
+
 		return id;
 	}
 
@@ -171,7 +171,7 @@ public class EmployeeDaoDBImpl implements EmployeeDao {
 		Connection connection = connect();
 
 		try {
-			
+
 			PreparedStatement ps = connection.prepareStatement(SQL_READ_EMPLOYEES_BY_SURNAME);
 			ps.setString(1, surname);
 			ResultSet rs = ps.executeQuery();
@@ -200,14 +200,14 @@ public class EmployeeDaoDBImpl implements EmployeeDao {
 		Connection connection = connect();
 
 		try {
-			
+
 			PreparedStatement ps = connection.prepareStatement(SQL_UPDATE_EMPLOYEE_BY_ID);
-			
+
 			ps.setString(1, entity.getName());
 			ps.setString(2, entity.getSurname());
 			ps.setInt(3, entity.getYear());
 			ps.setInt(4, id);
-			
+
 			ps.executeUpdate();
 
 		} catch (SQLException e) {
@@ -222,10 +222,10 @@ public class EmployeeDaoDBImpl implements EmployeeDao {
 		Connection connection = connect();
 
 		try {
-			
+
 			PreparedStatement ps = connection.prepareStatement(SQL_DELETE_EMPLOYEE_BY_ID);
 			ps.setInt(1, id);
-			
+
 			ps.executeUpdate();
 
 		} catch (SQLException e) {

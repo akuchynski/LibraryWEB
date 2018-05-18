@@ -13,26 +13,25 @@ import by.htp.library.dao.UserDao;
 
 public class AjaxLoginCheck extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 	}
 
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
 		@SuppressWarnings("unchecked")
-		final AtomicReference<UserDao> userdao = (AtomicReference<UserDao>) request.getServletContext().getAttribute("userdao");
+		AtomicReference<UserDao> userdao = (AtomicReference<UserDao>) request.getServletContext()
+				.getAttribute("userdao");
+		
 		String login = request.getParameter("loginname");
 		PrintWriter out = response.getWriter();
-		
-		if(userdao.get().readByLogin(login).getLogin() != null){
-			
-			out.print(login + " is taken!");
-			
+
+		if (userdao.get().readByLogin(login).getLogin() != null) {
+			out.print("false");
 		} else {
-			
-			out.print(login + " is available!");
+			out.print("true");
 		}
 	}
 }

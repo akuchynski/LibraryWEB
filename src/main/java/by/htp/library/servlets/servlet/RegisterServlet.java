@@ -24,26 +24,27 @@ public class RegisterServlet extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-		final AtomicReference<UserDao> userdao = (AtomicReference<UserDao>) request.getServletContext().getAttribute("userdao");
-		final AtomicReference<EmployeeDao> employeedao = (AtomicReference<EmployeeDao>) request.getServletContext().getAttribute("employeedao");
 
-		final Integer emplId = Integer.parseInt(request.getParameter("emplId"));
-		
-		final String login = request.getParameter("login");
-		final String email = request.getParameter("email");
-		final String password = request.getParameter("password");
+		AtomicReference<UserDao> userdao = (AtomicReference<UserDao>) request.getServletContext()
+				.getAttribute("userdao");
+		AtomicReference<EmployeeDao> employeedao = (AtomicReference<EmployeeDao>) request.getServletContext()
+				.getAttribute("employeedao");
 
-		final User user = new User();
+		Integer emplId = Integer.parseInt(request.getParameter("emplId"));
+
+		String login = request.getParameter("login");
+		String email = request.getParameter("email");
+		String password = request.getParameter("password");
+
+		User user = new User();
 
 		user.setId(employeedao.get().read(emplId).getId());
 		user.setLogin(login);
 		user.setEmail(email);
 		user.setPassword(password);
-		
+
 		userdao.get().create(user);
 
 		response.sendRedirect(request.getContextPath() + "/");
-		//doGet(request, response);
 	}
 }

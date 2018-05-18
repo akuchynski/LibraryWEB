@@ -2,6 +2,7 @@ package by.htp.library.bean;
 
 public class Employee extends Entity {
 
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private String surname;
 	private int year;

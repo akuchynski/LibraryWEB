@@ -2,13 +2,15 @@ package by.htp.library.bean;
 
 import java.util.Date;
 
-public class Order extends Entity{
+public class Order extends Entity {
+
+	private static final long serialVersionUID = 1L;
 	private int bookId;
 	private int emplId;
 	private int days;
 	private Date date;
 	private STATUS status;
-	
+
 	public Order() {
 		super();
 	}

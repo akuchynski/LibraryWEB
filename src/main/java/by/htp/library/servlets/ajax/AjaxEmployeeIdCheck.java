@@ -14,29 +14,27 @@ import by.htp.library.dao.UserDao;
 
 public class AjaxEmployeeIdCheck extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		AtomicReference<UserDao> userdao = (AtomicReference<UserDao>) request.getServletContext()
+				.getAttribute("userdao");
+		AtomicReference<EmployeeDao> employeedao = (AtomicReference<EmployeeDao>) request.getServletContext()
+				.getAttribute("employeedao");
 		
-		final AtomicReference<UserDao> userdao = (AtomicReference<UserDao>) request.getServletContext().getAttribute("userdao");
-		final AtomicReference<EmployeeDao> employeedao = (AtomicReference<EmployeeDao>) request.getServletContext().getAttribute("employeedao");
 		int emplId = Integer.parseInt(request.getParameter("emplId"));
 		PrintWriter out = response.getWriter();
-		
-		if(userdao.get().read(emplId).getId() == emplId && employeedao.get().read(emplId).getId() == emplId){
-			
-			out.print(emplId + " is already used!");
-			
-		} else if(userdao.get().read(emplId).getId() != emplId && employeedao.get().read(emplId).getId() == emplId){
-			
-			out.print(emplId + " is available!");
-			
+
+		if (userdao.get().read(emplId).getId() != emplId && employeedao.get().read(emplId).getId() == emplId) {
+			out.print("true");
 		} else {
-			
-			out.print(emplId + " is incorrect!");
+			out.print("false");
 		}
 	}
 }

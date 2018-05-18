@@ -12,34 +12,36 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import by.htp.library.bean.Employee;
-import by.htp.library.bean.User;
 import by.htp.library.dao.EmployeeDao;
-import by.htp.library.dao.UserDao;
+import by.htp.library.dao.ReportDao;
 
-public class UserListServlet extends HttpServlet {
+public class ReportServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final int DEFAULT_BOOK_COUNT = 2;
 
 	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		AtomicReference<UserDao> userdao = (AtomicReference<UserDao>) request.getServletContext()
-				.getAttribute("userdao");
-		AtomicReference<EmployeeDao> employeedao = (AtomicReference<EmployeeDao>) request.getServletContext()
+		AtomicReference<EmployeeDao> employeeDao = (AtomicReference<EmployeeDao>) request.getServletContext()
 				.getAttribute("employeedao");
+		AtomicReference<ReportDao> reportDao = (AtomicReference<ReportDao>) request.getServletContext()
+				.getAttribute("reportdao");
 
-		List<User> userList = userdao.get().readAll();
-		List<Employee> employeeList = employeedao.get().readAll();
+		Map<Integer, Integer> emplBooksReport = reportDao.get().getEmployeesBooks(DEFAULT_BOOK_COUNT);
+		Map<Integer, Integer> emplBooksDelayReport = reportDao.get().getEmployeesBooksDelay(DEFAULT_BOOK_COUNT);
+
+		List<Employee> employeeList = employeeDao.get().readAll();
 
 		Map<Integer, Employee> employeeMap = employeeList.stream()
 				.collect(Collectors.toMap(Employee::getId, item -> item));
 
-		request.getSession().setAttribute("userList", userList);
+		request.getSession().setAttribute("emplBooksReport", emplBooksReport);
+		request.getSession().setAttribute("emplBooksDelayReport", emplBooksDelayReport);
 		request.getSession().setAttribute("employeeMap", employeeMap);
 
 		String menuPath = (String) request.getSession().getAttribute("menuPath");
 
-		request.getRequestDispatcher(menuPath + "/user-list.jsp").forward(request, response);
-		request.getSession().removeAttribute("messageClass");
+		request.getRequestDispatcher(menuPath + "/reports.jsp").forward(request, response);
 	}
 }
