@@ -25,7 +25,7 @@ public class AjaxBookFind extends HttpServlet {
 		
 		@SuppressWarnings("unchecked")
 		final AtomicReference<BookDao> bookdao = (AtomicReference<BookDao>) request.getServletContext().getAttribute("bookdao");
-		String title = request.getParameter("bookSearch");
+//		String title = request.getParameter("bookSearch");
 		PrintWriter out = response.getWriter();
 //		List<Book> bookList = bookdao.get().readByTitle(title);
 		List<Book> bookList = bookdao.get().readAll();

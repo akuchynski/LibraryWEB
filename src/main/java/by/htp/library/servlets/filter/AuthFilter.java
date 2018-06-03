@@ -108,12 +108,12 @@ public class AuthFilter implements Filter {
 		
 		if (role.equals(ROLE.ADMINISTRATOR)) {
 
-			session.setAttribute("menuPath", "/jsp/admin");
+			session.setAttribute("menuPath", "WEB-INF/jsp/admin");
 			res.sendRedirect("dashboard");
 
 		} else if (role.equals(ROLE.USER)) {
 
-			session.setAttribute("menuPath", "/jsp/user");
+			session.setAttribute("menuPath", "WEB-INF/jsp/user");
 			res.sendRedirect("dashboard");
 
 		} else {

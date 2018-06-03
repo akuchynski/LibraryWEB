@@ -35,7 +35,7 @@ public class ContextListener implements ServletContextListener {
 		orderdao = new AtomicReference<>(new OrderDaoDBImpl());
 		reportdao = new AtomicReference<>(new ReportDao());
 
-		final ServletContext sc = sce.getServletContext();
+		ServletContext sc = sce.getServletContext();
 		sc.setAttribute("userdao", userdao);
 		sc.setAttribute("bookdao", bookdao);
 		sc.setAttribute("employeedao", employeedao);
