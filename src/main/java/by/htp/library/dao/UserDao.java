@@ -17,5 +17,7 @@ public interface UserDao extends BaseDao<User> {
 	public boolean userIsExist(String login, String password);
 
 	public ROLE getRoleByLoginPassword(String login, String password);
+	
+	public boolean userIsActivated(String login);
 
 }

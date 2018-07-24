@@ -26,7 +26,7 @@ public class UserDaoDBImpl implements UserDao {
 	private static final String SQL_READ_LAST_USERS = "SELECT * FROM user order by user_id desc limit ?";
 	private static final String SQL_READ_USER_BY_LOGIN_PASSWORD = "SELECT * FROM user WHERE login = ? AND password = ?";
 	private static final String SQL_READ_USER_ROLE_BY_LOGIN_PASSWORD = "SELECT role FROM user WHERE login = ? AND password = ?";
-	private static final String SQL_UPDATE_USER_BY_ID = "UPDATE user SET email = ?, password = ? WHERE user_id = ?";
+	private static final String SQL_UPDATE_USER_BY_ID = "UPDATE user SET email = ?, password = ?, active = ? WHERE user_id = ?";
 	private static final String SQL_DELETE_USER_BY_ID = "DELETE FROM user WHERE user_id = ?";
 
 	@Override
@@ -96,6 +96,7 @@ public class UserDaoDBImpl implements UserDao {
 				user.setPassword(rs.getString("password"));
 				user.setEmail(rs.getString("email"));
 				user.setRole(ROLE.valueOf(rs.getString("role")));
+				user.setActive(rs.getBoolean("active"));
 			}
 
 		} catch (SQLException e) {
@@ -125,6 +126,7 @@ public class UserDaoDBImpl implements UserDao {
 				user.setPassword(rs.getString("password"));
 				user.setEmail(rs.getString("email"));
 				user.setRole(ROLE.valueOf(rs.getString("role")));
+				user.setActive(rs.getBoolean("active"));
 			}
 
 		} catch (SQLException e) {
@@ -153,6 +155,7 @@ public class UserDaoDBImpl implements UserDao {
 				user.setPassword(rs.getString("password"));
 				user.setEmail(rs.getString("email"));
 				user.setRole(ROLE.valueOf(rs.getString("role")));
+				user.setActive(rs.getBoolean("active"));
 
 				users.add(user);
 			}
@@ -184,6 +187,7 @@ public class UserDaoDBImpl implements UserDao {
 				user.setPassword(rs.getString("password"));
 				user.setEmail(rs.getString("email"));
 				user.setRole(ROLE.valueOf(rs.getString("role")));
+				user.setActive(rs.getBoolean("active"));
 
 				users.add(user);
 			}
@@ -221,6 +225,34 @@ public class UserDaoDBImpl implements UserDao {
 
 		return result;
 	}
+	
+	@Override
+	public boolean userIsActivated(String login) {
+		
+		boolean activate = false;
+		Connection connection = connect();
+
+		try {
+
+			PreparedStatement ps = connection.prepareStatement(SQL_READ_USER_BY_LOGIN);
+			ps.setString(1, login);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				if(rs.getInt("deactivate") != 0) {
+					activate = true;
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		disconnect(connection);
+
+		return activate;
+	}
+	
 
 	@Override
 	public ROLE getRoleByLoginPassword(String login, String password) {
@@ -258,7 +290,8 @@ public class UserDaoDBImpl implements UserDao {
 
 			ps.setString(1, entity.getEmail());
 			ps.setString(2, entity.getPassword());
-			ps.setInt(3, id);
+			ps.setBoolean(3, entity.isActive());
+			ps.setInt(4, id);
 
 			ps.executeUpdate();
 
@@ -288,5 +321,4 @@ public class UserDaoDBImpl implements UserDao {
 		disconnect(connection);
 
 	}
-
 }

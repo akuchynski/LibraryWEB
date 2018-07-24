@@ -65,11 +65,16 @@ public class UserEditServlet extends HttpServlet {
 		String submitType = request.getParameter("submit");
 
 		if (submitType.equals("delete")) {
+
 			userdao.get().delete(id);
 			session.setAttribute("messageClass", "user-delete-success");
 			response.sendRedirect("user-edit");
+
 		} else if (submitType.equals("update")) {
+
 			user.setEmail(request.getParameter("email"));
+			user.setActive(Boolean.parseBoolean(request.getParameter("radioActive")));
+
 			if (request.getParameter("new_password").isEmpty()) {
 				user.setPassword(request.getParameter("old_password"));
 			} else {
@@ -88,7 +93,8 @@ public class UserEditServlet extends HttpServlet {
 			request.getSession().setAttribute("currentUser", currentUser);
 
 			session.setAttribute("messageClass", "user-update-success");
-			response.sendRedirect("user-edit");
+			response.sendRedirect("user-list");
+
 		} else {
 			session.setAttribute("messageClass", "user-pass-error");
 			response.sendRedirect("user-edit");

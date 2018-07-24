@@ -62,7 +62,7 @@ public class DashboardServlet extends HttpServlet {
 		Map<Integer, Book> bookMap = bookList.stream().collect(Collectors.toMap(Book::getId, item -> item));
 		Map<Integer, Employee> employeeMap = employeeList.stream()
 				.collect(Collectors.toMap(Employee::getId, item -> item));
-		Map<Integer, User> userMap = userLastList.stream().collect(Collectors.toMap(User::getId, item -> item));
+		Map<Integer, User> userMap = userList.stream().collect(Collectors.toMap(User::getId, item -> item));
 
 		session.setAttribute("orderListWait", orderListWait);
 		session.setAttribute("userLastList", userLastList);

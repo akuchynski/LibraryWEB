@@ -61,8 +61,8 @@ public class AuthFilter implements Filter {
 
 				chain.doFilter(req, res);
 			}
-
-		} else if (userdao.get().userIsExist(login, password)) {
+			
+		} else if (userdao.get().userIsExist(login, password) && userdao.get().readByLogin(login).isActive()) {
 
 			ROLE role = userdao.get().getRoleByLoginPassword(login, password);
 			int currentId = userdao.get().readByLogin(login).getId();
@@ -89,9 +89,13 @@ public class AuthFilter implements Filter {
 			}
 
 			moveToMenu(req, res, role);
+			
+		} else if (userdao.get().userIsExist(login, password) && !userdao.get().readByLogin(login).isActive()) {
+			
+			res.sendRedirect("deactive");
 
 		} else if (path.contains("assets") || path.contains("login") || path.contains("register")
-				|| path.contains("ajax")) {
+				|| path.contains("ajax") || path.contains("deactive")) {
 
 			chain.doFilter(req, res);
 

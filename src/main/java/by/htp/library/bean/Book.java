@@ -7,17 +7,19 @@ public class Book extends Entity {
 	private String description;
 	private String author;
 	private int year;
+	private int count;
 
 	public Book() {
 		super();
 	}
 
-	public Book(String title, String description, String author, int year) {
+	public Book(String title, String description, String author, int year, int count) {
 		super();
 		this.title = title;
 		this.description = description;
 		this.author = author;
 		this.year = year;
+		this.count = count;
 	}
 
 	public String getTitle() {
@@ -51,12 +53,22 @@ public class Book extends Entity {
 	public void setYear(int year) {
 		this.year = year;
 	}
+	
+	public int getCount() {
+		return count;
+	}
 
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((author == null) ? 0 : author.hashCode());
+		result = prime * result + count;
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + year;
@@ -77,6 +89,8 @@ public class Book extends Entity {
 				return false;
 		} else if (!author.equals(other.author))
 			return false;
+		if (count != other.count)
+			return false;
 		if (description == null) {
 			if (other.description != null)
 				return false;
@@ -94,6 +108,7 @@ public class Book extends Entity {
 
 	@Override
 	public String toString() {
-		return "Book [title=" + title + ", description=" + description + ", author=" + author + ", year=" + year + "]";
+		return "Book [title=" + title + ", description=" + description + ", author=" + author + ", year=" + year
+				+ ", count=" + count + "]";
 	}
 }
