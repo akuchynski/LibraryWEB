@@ -34,7 +34,7 @@ public class OrderEditServlet extends HttpServlet {
 		AtomicReference<OrderDao> orderdao = (AtomicReference<OrderDao>) request.getServletContext()
 				.getAttribute("orderdao");
 
-		List<Book> bookList = bookdao.get().readAll();
+		List<Book> bookList = bookdao.get().readAvailableBooks();
 		request.getSession().setAttribute("bookList", bookList);
 
 		List<Employee> employeeList = employeedao.get().readAll();
@@ -67,11 +67,16 @@ public class OrderEditServlet extends HttpServlet {
 
 		AtomicReference<OrderDao> orderdao = (AtomicReference<OrderDao>) request.getServletContext()
 				.getAttribute("orderdao");
+		AtomicReference<BookDao> bookdao = (AtomicReference<BookDao>) request.getServletContext()
+				.getAttribute("bookdao");
 		HttpSession session = request.getSession();
 		int id = (Integer) session.getAttribute("editId");
 		String submitType = request.getParameter("submit");
 
 		if (submitType.equals("delete")) {
+			if(!orderdao.get().read(id).getStatus().equals(STATUS.RETURNED)) {
+				bookdao.get().incrementBookQuantity(orderdao.get().read(id).getBookId());
+			}
 			orderdao.get().delete(id);
 			session.setAttribute("messageClass", "order-delete-success");
 			response.sendRedirect("order-list");
@@ -86,7 +91,13 @@ public class OrderEditServlet extends HttpServlet {
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-			order.setStatus(STATUS.valueOf(request.getParameter("status")));
+			STATUS orderStatus = STATUS.valueOf(request.getParameter("status"));
+			order.setStatus(orderStatus);
+			if(orderStatus.equals(STATUS.RETURNED) && !orderdao.get().read(id).getStatus().equals(STATUS.RETURNED)){
+				bookdao.get().incrementBookQuantity(orderdao.get().read(id).getBookId());
+			} else if ((orderStatus.equals(STATUS.WAIT) || orderStatus.equals(STATUS.DELIVERED)) && orderdao.get().read(id).getStatus().equals(STATUS.RETURNED)) {
+				bookdao.get().decrementBookQuantity(orderdao.get().read(id).getBookId());
+			}
 			orderdao.get().update(id, order);
 			session.setAttribute("messageClass", "order-update-success");
 			response.sendRedirect("order-list");

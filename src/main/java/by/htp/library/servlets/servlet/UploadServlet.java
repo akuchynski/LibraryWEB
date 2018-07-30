@@ -15,7 +15,7 @@ import javax.servlet.http.Part;
 public class UploadServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private static final String SAVE_DIR = "assets\\images\\users";
+	private static final String SAVE_DIR = "assets/images/users";
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

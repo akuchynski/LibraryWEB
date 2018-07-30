@@ -31,7 +31,7 @@ public class OrderAddServlet extends HttpServlet {
 		AtomicReference<EmployeeDao> employeedao = (AtomicReference<EmployeeDao>) request.getServletContext()
 				.getAttribute("employeedao");
 
-		List<Book> bookList = bookdao.get().readAll();
+		List<Book> bookList = bookdao.get().readAvailableBooks();
 		request.getSession().setAttribute("bookList", bookList);
 
 		List<Employee> employeeList = employeedao.get().readAll();
@@ -56,6 +56,8 @@ public class OrderAddServlet extends HttpServlet {
 
 		AtomicReference<OrderDao> orderdao = (AtomicReference<OrderDao>) request.getServletContext()
 				.getAttribute("orderdao");
+		AtomicReference<BookDao> bookdao = (AtomicReference<BookDao>) request.getServletContext()
+				.getAttribute("bookdao");
 		HttpSession session = request.getSession();
 		Order order = new Order();
 
@@ -73,6 +75,7 @@ public class OrderAddServlet extends HttpServlet {
 		order.setStatus(status);
 
 		orderdao.get().create(order);
+		bookdao.get().decrementBookQuantity(order.getBookId());
 
 		session.setAttribute("successOrderSubmit", true);
 
