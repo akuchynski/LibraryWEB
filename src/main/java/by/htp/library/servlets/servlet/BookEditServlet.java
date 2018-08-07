@@ -65,6 +65,7 @@ public class BookEditServlet extends HttpServlet {
 			book.setDescription(request.getParameter("description"));
 			book.setAuthor(request.getParameter("author"));
 			book.setYear(Integer.parseInt(request.getParameter("year")));
+			book.setCount(Integer.parseInt(request.getParameter("count")));
 			bookdao.get().update(id, book);
 			session.setAttribute("messageClass", "book-update-success");
 			response.sendRedirect("book-list");

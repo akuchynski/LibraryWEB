@@ -34,6 +34,7 @@ public class BookAddServlet extends HttpServlet {
 		String description = request.getParameter("description");
 		String author = request.getParameter("author");
 		int year = Integer.parseInt(request.getParameter("year"));
+		int count = Integer.parseInt(request.getParameter("count"));
 
 		Book book = new Book();
 
@@ -41,6 +42,7 @@ public class BookAddServlet extends HttpServlet {
 		book.setDescription(description);
 		book.setAuthor(author);
 		book.setYear(year);
+		book.setCount(count);
 
 		bookdao.get().create(book);
 
